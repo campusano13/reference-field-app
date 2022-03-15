@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Card,
     Typography,
@@ -15,64 +15,21 @@ interface FieldProps {
     sdk: FieldExtensionSDK;
 }
 
-const customRenderer = (props: any) => {
-    if (props.contentType.sys.id !== 'blogPost') {
-        return false;
-    }
-    const title = props.entity.fields?.title?.[props.localeCode] || 'Untitled';
-
-    return (
-        <Card style={{ flexGrow: 1 }} padding="none">
-            <div style={{ display: 'flex' }}>
-                <div>{props.cardDragHandle}</div>
-                <div style={{ flexGrow: 1, padding: '1em' }}>
-                    <Typography style={{ marginBottom: '20px' }}>
-                        <Heading style={{ borderBottom: '1px solid gray' }}>
-                            {title}
-                        </Heading>
-                        {props.entity.fields.body &&
-                            documentToReactComponents(
-                                props.entity.fields.body[props.localeCode]
-                            )}
-                    </Typography>
-                </div>
-                <div style={{ padding: '1em' }}>
-                    <CardActions>
-                        <DropdownList>
-                            <DropdownListItem onClick={props.onEdit}>
-                                Edit
-                            </DropdownListItem>
-                            <DropdownListItem onClick={props.onRemove}>
-                                Remove
-                            </DropdownListItem>
-                        </DropdownList>
-                    </CardActions>
-                </div>
-            </div>
-        </Card>
-    );
-};
-
 const Field = (props: FieldProps) => {
+    const [entries, setEntries] = useState([]);
+
     useEffect(() => {
-        props.sdk.window.startAutoResizer();
+        const referenceEntryIds: string[] = props.sdk.field.getValue().map((v: any) => v.sys.id);
+
+        Promise.all(referenceEntryIds.map((id: string) => props.sdk.space.getEntry(id)))
+        .then((data: any) => {
+            setEntries(data);
+        })
     });
 
-    return (
-        <MultipleEntryReferenceEditor
-            renderCustomCard={customRenderer}
-            viewType="link"
-            sdk={props.sdk}
-            isInitiallyDisabled
-            hasCardEditActions
-            parameters={{
-                instance: {
-                    showCreateEntityAction: true,
-                    showLinkEntityAction: true,
-                },
-            }}
-        />
-    );
+    return <div>
+        {JSON.stringify(entries)}
+    </div>
 };
 
 export default Field;
