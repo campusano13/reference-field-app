@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     Select,
     SelectField,
+    FormLabel,
     Option,
 } from '@contentful/forma-36-react-components';
 // import { Select } from "@contentful/f36-components";
@@ -17,14 +18,6 @@ const Field = (props: FieldProps) => {
     // const [entries, setEntries] = useState([]);
     // const [selected, setSelected] = useState(props.sdk.field.getValue() || null);
     const [selectValue, setSelectValue] = useState(['optionOne']);
-    // const handleOnChange = (event: any) =>  {
-    //     console.log( props.sdk.field)
-    //     console.log('before', props.sdk.field.getValue())
-    //     props.sdk.field.setValue([event.target.value])
-    //     console.log('after', props.sdk.field.getValue())
-    //     setSelectValue(event.target.value);
-    // }
-    // const handleOnChange = (event: any) =>  props.sdk.field.setValue(['optionThree']);
 
     useEffect(() => {
         props.sdk.window.startAutoResizer();
@@ -39,23 +32,6 @@ const Field = (props: FieldProps) => {
         // props.sdk.entry.fields.salesforceIDs.setValue([{ selectedId: 'optionThree' }]);
 
         console.log(props.sdk);
-
-        props.sdk.entry.fields.salesforceIDs.onValueChanged((value) => {
-            // if (!entry) {
-            //     setSelectValue([null]);
-            //     return;
-            // }
-
-            console.log('HERES VALUE', value);
-
-            // const id = 'optionTwo';
-            // setSelectValue([id]);
-            // props.sdk.field.setValue([id])
-
-            // props.sdk.field.setValue([event.target.value])
-            // console.log('after', props.sdk.field.getValue())
-            // setSelectValue(event.target.value);
-        })
     }, [props]);
 
     // const selectedEntry = entries.find((entry: any) => entry.sys.id === selectedId) || {};
@@ -65,11 +41,16 @@ const Field = (props: FieldProps) => {
     // }
 
     const onChange = () => {
-        // props.sdk.field.setValue({val: 'optionTwo'})
         props.sdk.entry.fields.salesforceElementId.setValue('test');
     };
 
     return <>
+            <FormLabel
+                htmlFor="optionSelect"
+                requiredText="requiredText"
+                >
+                Salesforce ID
+            </FormLabel>
             <Select id="optionSelect" name="optionSelect" onChange={onChange}>
                 <Option value="optionOne">Option 1</Option>
                 <Option value="optionTwo">Option 2</Option>
