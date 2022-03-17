@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Card,
-    Typography,
-    Heading,
-    CardActions,
-    DropdownList,
-    DropdownListItem,
+    Select,
+    SelectField,
+    Option,
 } from '@contentful/forma-36-react-components';
-import { MultipleEntryReferenceEditor } from '@contentful/field-editor-reference';
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
+// import { Select } from "@contentful/f36-components";
+// import { MultipleEntryReferenceEditor } from '@contentful/field-editor-reference';
+// import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { FieldExtensionSDK } from '@contentful/app-sdk';
 
 interface FieldProps {
@@ -16,20 +14,69 @@ interface FieldProps {
 }
 
 const Field = (props: FieldProps) => {
-    const [entries, setEntries] = useState([]);
+    // const [entries, setEntries] = useState([]);
+    // const [selected, setSelected] = useState(props.sdk.field.getValue() || null);
+    const [selectValue, setSelectValue] = useState(['optionOne']);
+    // const handleOnChange = (event: any) =>  {
+    //     console.log( props.sdk.field)
+    //     console.log('before', props.sdk.field.getValue())
+    //     props.sdk.field.setValue([event.target.value])
+    //     console.log('after', props.sdk.field.getValue())
+    //     setSelectValue(event.target.value);
+    // }
+    // const handleOnChange = (event: any) =>  props.sdk.field.setValue(['optionThree']);
 
     useEffect(() => {
-        const referenceEntryIds: string[] = props.sdk.field.getValue().map((v: any) => v.sys.id);
+        props.sdk.window.startAutoResizer();
+        // const referenceEntryIds: string[] = props.sdk.field.getValue().map((v: any) => v.sys.id);
 
-        Promise.all(referenceEntryIds.map((id: string) => props.sdk.space.getEntry(id)))
-        .then((data: any) => {
-            setEntries(data);
+        // Promise.all(referenceEntryIds.map((id: string) => props.sdk.space.getEntry(id)))
+        // .then((data: any) => {
+        //     setEntries(data);
+        //     setSelectedId(data[0].sys.id)
+        // })
+
+        // props.sdk.entry.fields.salesforceIDs.setValue([{ selectedId: 'optionThree' }]);
+
+        console.log(props.sdk);
+
+        props.sdk.entry.fields.salesforceIDs.onValueChanged((value) => {
+            // if (!entry) {
+            //     setSelectValue([null]);
+            //     return;
+            // }
+
+            console.log('HERES VALUE', value);
+
+            // const id = 'optionTwo';
+            // setSelectValue([id]);
+            // props.sdk.field.setValue([id])
+
+            // props.sdk.field.setValue([event.target.value])
+            // console.log('after', props.sdk.field.getValue())
+            // setSelectValue(event.target.value);
         })
-    });
+    }, [props]);
 
-    return <div>
-        {JSON.stringify(entries)}
-    </div>
+    // const selectedEntry = entries.find((entry: any) => entry.sys.id === selectedId) || {};
+
+    // const setValue = () => {
+    //     props.sdk.field.setValue(['optionThree']);
+    // }
+
+    const onChange = () => {
+        // props.sdk.field.setValue({val: 'optionTwo'})
+        props.sdk.entry.fields.salesforceElementId.setValue('test');
+    };
+
+    return <>
+            <Select id="optionSelect" name="optionSelect" onChange={onChange}>
+                <Option value="optionOne">Option 1</Option>
+                <Option value="optionTwo">Option 2</Option>
+                <Option value="optionThree">Option 3</Option>
+            </Select>
+        </>
+    
 };
 
 export default Field;
