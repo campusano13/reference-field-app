@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import {
-    Select,
-    SelectField,
-    FormLabel,
-    Option,
-} from '@contentful/forma-36-react-components';
+import { useEffect } from 'react';
+// import {
+//     Select,
+//     SelectField,
+//     FormLabel,
+//     Option,
+// } from '@contentful/forma-36-react-components';
 // import { Select } from "@contentful/f36-components";
 // import { MultipleEntryReferenceEditor } from '@contentful/field-editor-reference';
 // import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -17,7 +17,7 @@ interface FieldProps {
 const Field = (props: FieldProps) => {
     // const [entries, setEntries] = useState([]);
     // const [selected, setSelected] = useState(props.sdk.field.getValue() || null);
-    const [selectValue, setSelectValue] = useState(['optionOne']);
+    // const [selectValue, setSelectValue] = useState(['optionOne']);
 
     useEffect(() => {
         props.sdk.window.startAutoResizer();
@@ -40,12 +40,12 @@ const Field = (props: FieldProps) => {
     //     props.sdk.field.setValue(['optionThree']);
     // }
 
-    const onChange = () => {
-        props.sdk.entry.fields.salesforceElementId.setValue('test');
-    };
+    // const onChange = () => {
+    //     props.sdk.entry.fields.salesforceElementId.setValue('test');
+    // };
 
     return <>
-            <FormLabel
+            {/* <FormLabel
                 htmlFor="optionSelect"
                 requiredText="requiredText"
                 >
@@ -55,7 +55,7 @@ const Field = (props: FieldProps) => {
                 <Option value="optionOne">Option 1</Option>
                 <Option value="optionTwo">Option 2</Option>
                 <Option value="optionThree">Option 3</Option>
-            </Select>
+            </Select> */}
         </>
     
 };
