@@ -5,6 +5,7 @@ import {
   Option,
 } from "@contentful/forma-36-react-components";
 import { SidebarExtensionSDK } from "@contentful/app-sdk";
+import axios from "axios";
 
 interface SidebarProps {
   sdk: SidebarExtensionSDK;
@@ -30,14 +31,84 @@ const Sidebar = (props: SidebarProps) => {
     salesforceSuperCategory: props.sdk.entry.fields.salesforceSuperCategory.getValue(),
     salesforcePartnerId: props.sdk.entry.fields.salesforcePartnerId.getValue(),
   };
-  const baseValues: any = { sitecoreTemplateId: ["xyz", "123"] };
+  const baseApiValues: any = {};
 
+  // eslint-disable-next-line
   const [form, setForm] = useState(baseForm);
-  const [apiValues, setApiValues] = useState(baseValues);
+  const [apiValues, setApiValues] = useState(baseApiValues);
 
   useEffect(() => {
-    console.log("form change", form);
-  }, [form]);
+    const getSitecoreTemplateIds = async () => {
+      const res = await axios.get(
+        "https://jsonplaceholder.typicode.com/todos?_start=0&_limit=12"
+      );
+
+      setApiValues((prevState: any) => {
+        return {
+          ...prevState,
+          sitecoreTemplateId: res.data,
+        };
+      });
+    };
+
+    const getSitecoreProductRuleId = async () => {
+      const res = await axios.get(
+        "https://jsonplaceholder.typicode.com/todos?_start=12&_limit=12"
+      );
+
+      setApiValues((prevState: any) => {
+        return {
+          ...prevState,
+          sitecoreProductRuleId: res.data,
+        };
+      });
+    };
+
+    const getSalesforceElementId = async () => {
+      const res = await axios.get(
+        "https://jsonplaceholder.typicode.com/todos?_start=25&_limit=12"
+      );
+
+      setApiValues((prevState: any) => {
+        return {
+          ...prevState,
+          salesforceElementId: res.data,
+        };
+      });
+    };
+
+    const getSalesforceSuperCategory = async () => {
+      const res = await axios.get(
+        "https://jsonplaceholder.typicode.com/todos?_start=37&_limit=12"
+      );
+
+      setApiValues((prevState: any) => {
+        return {
+          ...prevState,
+          salesforceSuperCategory: res.data,
+        };
+      });
+    };
+
+    const getSalesforcePartnerId = async () => {
+      const res = await axios.get(
+        "https://jsonplaceholder.typicode.com/todos?_start=49&_limit=12"
+      );
+
+      setApiValues((prevState: any) => {
+        return {
+          ...prevState,
+          salesforcePartnerId: res.data,
+        };
+      });
+    };
+
+    getSitecoreTemplateIds();
+    getSitecoreProductRuleId();
+    getSalesforceElementId();
+    getSalesforceSuperCategory();
+    getSalesforcePartnerId();
+  }, []);
 
   const onChange = (e: any) => {
     setForm((prevState) => {
@@ -62,10 +133,11 @@ const Sidebar = (props: SidebarProps) => {
             name={field}
             onChange={onChange}
             className="sidebar-select"
+            value={baseForm[field]}
           >
             {apiValues[field]?.map((v: any) => (
-              <Option value={v} key={v}>
-                {v}
+              <Option value={v.title} key={v.id}>
+                {v.title}
               </Option>
             ))}
           </Select>
