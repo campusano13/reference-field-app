@@ -5,6 +5,7 @@ import {
   Option,
 } from "@contentful/forma-36-react-components";
 import { SidebarExtensionSDK } from "@contentful/app-sdk";
+import ReactSelect from "react-select";
 import axios from "axios";
 
 interface SidebarProps {
@@ -15,13 +16,14 @@ type formOptions = {
   [key: string]: any;
 };
 
-const customFields = [
+const customSelectFields = [
   "sitecoreTemplateId",
   "sitecoreProductRuleId",
   "salesforceElementId",
   "salesforceSuperCategory",
-  "salesforcePartnerId",
 ];
+
+const customMultiselectFields = ["salesforcePartnerId"];
 
 const Sidebar = (props: SidebarProps) => {
   const baseForm: formOptions = {
@@ -95,10 +97,17 @@ const Sidebar = (props: SidebarProps) => {
         "https://jsonplaceholder.typicode.com/todos?_start=49&_limit=12"
       );
 
+      const ids = res.data.map((item: any) => {
+        return {
+          value: item.id,
+          label: item.id,
+        };
+      });
+
       setApiValues((prevState: any) => {
         return {
           ...prevState,
-          salesforcePartnerId: res.data,
+          salesforcePartnerId: ids,
         };
       });
     };
@@ -111,19 +120,38 @@ const Sidebar = (props: SidebarProps) => {
   }, []);
 
   const onChange = (e: any) => {
-    setForm((prevState) => {
-      return {
-        ...prevState,
-        [e.target.id]: e.target.value,
-      };
-    });
+    if (e.target?.type === "select-one") {
+      setForm((prevState) => {
+        return {
+          ...prevState,
+          [e.target.id]: e.target.value,
+        };
+      });
 
-    props.sdk.entry.fields[`${e.target.id}`].setValue(e.target.value);
+      props.sdk.entry.fields[`${e.target.id}`].setValue(e.target.value);
+    } else {
+      // Multiselect salesforcePartnerId
+      // Convert this format: e = [{ value: xxx, label: xxx }]
+      const getIds = e.map((item: any) => {
+        return item.value;
+      });
+
+      setForm((prevState) => {
+        return {
+          ...prevState,
+          salesforcePartnerId: JSON.stringify(getIds),
+        };
+      });
+
+      props.sdk.entry.fields.salesforcePartnerId.setValue(
+        JSON.stringify(getIds)
+      );
+    }
   };
 
   return (
     <>
-      {customFields?.map((field: any, index: any) => (
+      {customSelectFields?.map((field: string) => (
         <div key={field}>
           <FormLabel htmlFor={field} requiredText="requiredText">
             {field}
@@ -141,6 +169,21 @@ const Sidebar = (props: SidebarProps) => {
               </Option>
             ))}
           </Select>
+        </div>
+      ))}
+      {customMultiselectFields?.map((field: string) => (
+        <div key={field}>
+          <FormLabel htmlFor={field} requiredText="requiredText">
+            {field}
+          </FormLabel>
+          <ReactSelect
+            isMulti
+            key={field}
+            id={field}
+            options={apiValues[field]}
+            className="sidebar-select"
+            onChange={onChange}
+          />
         </div>
       ))}
     </>
