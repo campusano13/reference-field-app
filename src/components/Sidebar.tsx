@@ -26,12 +26,25 @@ const customSelectFields = [
 const customMultiselectFields = ["salesforcePartnerId"];
 
 const Sidebar = (props: SidebarProps) => {
+  const defaultMultiselectOptions = () => {
+    const val = props.sdk.entry.fields.salesforcePartnerId.getValue();
+    const parsed = JSON.parse(val);
+    const options = parsed.map((v: string) => {
+      return {
+        value: v,
+        label: v,
+      };
+    });
+
+    return options;
+  };
+
   const baseForm: formOptions = {
     sitecoreTemplateId: props.sdk.entry.fields.sitecoreTemplateId.getValue(),
     sitecoreProductRuleId: props.sdk.entry.fields.sitecoreProductRuleId.getValue(),
     salesforceElementId: props.sdk.entry.fields.salesforceElementId.getValue(),
     salesforceSuperCategory: props.sdk.entry.fields.salesforceSuperCategory.getValue(),
-    salesforcePartnerId: props.sdk.entry.fields.salesforcePartnerId.getValue(),
+    salesforcePartnerId: defaultMultiselectOptions(),
   };
   const baseApiValues: any = {};
 
@@ -117,6 +130,8 @@ const Sidebar = (props: SidebarProps) => {
     getSalesforceElementId();
     getSalesforceSuperCategory();
     getSalesforcePartnerId();
+
+    // eslint-disable-next-line
   }, []);
 
   const onChange = (e: any) => {
@@ -131,7 +146,7 @@ const Sidebar = (props: SidebarProps) => {
       props.sdk.entry.fields[`${e.target.id}`].setValue(e.target.value);
     } else {
       // Multiselect salesforcePartnerId
-      // Convert this format: e = [{ value: xxx, label: xxx }]
+      // Convert this react-select format: e = [{ value: xxx, label: xxx }, { value: xxx, label: xxx }]
       const getIds = e.map((item: any) => {
         return item.value;
       });
@@ -139,7 +154,7 @@ const Sidebar = (props: SidebarProps) => {
       setForm((prevState) => {
         return {
           ...prevState,
-          salesforcePartnerId: JSON.stringify(getIds),
+          salesforcePartnerId: e,
         };
       });
 
@@ -183,6 +198,7 @@ const Sidebar = (props: SidebarProps) => {
             options={apiValues[field]}
             className="sidebar-select"
             onChange={onChange}
+            defaultValue={baseForm[field]}
           />
         </div>
       ))}
